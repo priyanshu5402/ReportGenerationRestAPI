@@ -1,0 +1,10 @@
+CREATE PROCEDURE dbo.fetchStgId
+     @targetDate VARCHAR(20)
+AS 
+BEGIN
+    SELECT payload
+    FROM model.dbo.AuditTracking a join
+	model.dbo.SummaryTable s on
+	s.HermesId = a.HermesId
+    WHERE CONVERT(DATETIME, s.DateTimeStamp, 120) > CONVERT(DATETIME, '03/11/2023', 120) AND s.MsgType = 'XML01';
+END;
