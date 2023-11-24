@@ -30,7 +30,6 @@ public class ReportGenerationRoute extends RouteBuilder {
 			.process(new FetchPayloadProcessor())
 			.to("jdbc:dataSource")
 			.process(new PayloadProcessor())
-			.log("${body}")
 			.transform()
 			.constant("File Generated");
 	}

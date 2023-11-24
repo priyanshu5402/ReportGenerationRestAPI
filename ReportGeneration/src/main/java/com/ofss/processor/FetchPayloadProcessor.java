@@ -5,6 +5,7 @@ import org.apache.camel.Processor;
 
 public class FetchPayloadProcessor implements Processor{
 	
+	@Override
 	public void process(Exchange exchange) throws Exception{
 		String targetDate=exchange.getIn().getHeader("date", String.class);
 		exchange.getIn().setBody("EXEC fetchStgId @targetDate = '"+targetDate+"'");
