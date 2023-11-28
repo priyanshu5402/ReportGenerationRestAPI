@@ -15,35 +15,40 @@ import com.ofss.processor.FetchPayloadProcessor;
 @Component
 public class ReportGenerationRoute extends RouteBuilder {
 
-	@Autowired
-	DataSource dataSource;
+    @Autowired
+    DataSource dataSource;
 
-	@Override
-	public void configure() throws Exception {
-		rest("/hello")					//REST Api for fetching data and parsing the xml
-			.get("/fetchData")
-			.param().name("date").type(RestParamType.query).endParam()
-			.to("direct:payloadToCSV");
+    @Override
+    public void configure() throws Exception {
+        configureFetchDataRoute();
+        configureCountDataRoute();
+    }
 
-		from("direct:payloadToCSV")
-			.process(new FetchPayloadProcessor())
-			.to("jdbc:dataSource")
-			.process(new PayloadProcessor())
-			.transform()
-			.constant("File Generated");
-		
-		rest("/hello")					//REST APi for count of incoming and outgoing messages
-			.get("/countData")
-			.param().name("date").type(RestParamType.query).endParam()
-			.param().name("msgType").type(RestParamType.query).endParam()
-			.to("direct:hello");
+    private void configureFetchDataRoute() {
+        rest("/hello")
+            .get("/fetchData")
+                .param().name("date").type(RestParamType.query).endParam()
+                .to("direct:payloadToCSV");
 
-	from("direct:hello")
-		.process(new FetchCountProcessor())
-		.to("jdbc:dataSource")
-		.log("${body}")
-		.process(new CountMsgProcessor())
-		.transform()
-		.constant("task done");
-	}
+        from("direct:payloadToCSV")
+            .process(new FetchPayloadProcessor())
+            .to("jdbc:dataSource")
+            .process(new PayloadProcessor())
+            .transform().constant("File Generated");
+    }
+
+    private void configureCountDataRoute() {
+        rest("/hello")
+            .get("/countData")
+                .param().name("date").type(RestParamType.query).endParam()
+                .param().name("msgType").type(RestParamType.query).endParam()
+                .to("direct:hello");
+
+        from("direct:hello")
+            .process(new FetchCountProcessor())
+            .to("jdbc:dataSource")
+            .log("${body}")
+            .process(new CountMsgProcessor())
+            .transform().constant("Task done");
+    }
 }
