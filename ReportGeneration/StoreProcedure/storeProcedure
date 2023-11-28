@@ -1,3 +1,7 @@
+--Store Procedure for getting payload
+
+use model;
+go
 CREATE PROCEDURE dbo.fetchStgId
      @targetDate VARCHAR(20)
 AS 
@@ -6,5 +10,25 @@ BEGIN
     FROM model.dbo.AuditTracking a join
 	model.dbo.SummaryTable s on
 	s.HermesId = a.HermesId
-    WHERE CONVERT(DATETIME, s.DateTimeStamp, 120) > CONVERT(DATETIME, '03/11/2023', 120) AND s.MsgType = 'XML01';
+    WHERE CONVERT(DATETIME, s.DateTimeStamp, 120) > CONVERT(DATETIME, @targetDate, 120) AND s.MsgType = 'XML01';
+END;
+
+--Store procedure for getting count of message
+
+use model;
+go
+CREATE PROCEDURE dbo.countPayload
+     @targetDate VARCHAR(20),
+	 @msg VARCHAR(10)
+AS 
+BEGIN
+    SELECT COUNT(*) AS Payload
+FROM
+    model.dbo.AuditTracking a join
+	model.dbo.SummaryTable s on
+	s.HermesId = a.HermesId
+WHERE
+    a.StgId IN (1, 3) and  CONVERT(DATETIME, s.DateTimeStamp, 120) > CONVERT(DATETIME, @targetDate, 120) AND s.MsgType = @msg
+GROUP BY
+    a.StgId;
 END;
