@@ -28,7 +28,7 @@ FROM
 	model.dbo.SummaryTable s on
 	s.HermesId = a.HermesId
 WHERE
-    a.StgId IN (1, 3) and  CONVERT(DATETIME, s.DateTimeStamp, 120) > CONVERT(DATETIME, @targetDate, 120) AND s.MsgType = @msg
+    a.StgId IN (1, 3) and   CONVERT(DATE, s.DateTimeStamp) = CONVERT(DATE, @targetDate) AND s.MsgType = @msg
 GROUP BY
     a.StgId;
 END;
