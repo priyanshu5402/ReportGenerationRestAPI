@@ -35,7 +35,7 @@ public class XmlProcessor {
 
 			executor.shutdown();
 			while (!executor.isTerminated()) {
-				// Wait for all threads to finish
+				// Wait for all threads to finish.
 			}
 			writer.close();
 			
